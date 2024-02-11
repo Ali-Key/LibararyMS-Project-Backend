@@ -25,7 +25,7 @@ export const getBooks = async (req, res) => {
   }
 };
 
-// create book - POST only  admin creat book and check if can have a permission
+// create book - POST
 export const createBook = async (req, res) => {
   try {
     const adminId = req.user.id;
