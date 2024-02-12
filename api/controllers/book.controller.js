@@ -1,5 +1,7 @@
 import bookModel from "../models/book.model.js";
 import borrowingModel from "../models/borrowing.model.js";
+import lateChargeModel from "../models/lateCharge.model.js";
+import paidChargeModel from "../models/paidCharge.model.js";
 import transactionModel from "../models/transaction.model.js";
 import userModel from "../models/user.model.js";
 
@@ -640,12 +642,214 @@ export const deleteTransaction = async (req, res) => {
   }
 }
 
+// get lateCharges
+export const getLateCharges = async (req, res) => {
+  try {
+    const search = req.query;
+
+    const lateCharges = await lateChargeModel
+      .find(search)
+      .sort({ createdAt: -1 })
+      .populate("borrowing");
+
+    if (lateCharges.length === 0) {
+      return res
+        .status(404)
+        .json({ status: 404, message: "Late charges not found" });
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: "Late charges found successfully",
+      data: lateCharges,
+    });
 
 
+  }
+  catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: "Internal Server Error",
+    });
+  }
+
+};
+
+// get lateCharge by id 
+export const getLateCharge = async (req, res) => {
+  try {
+    const lateCharge = await lateChargeModel
+      .findById(req.params.id)
+      .sort({ createdAt: -1 })
+      .populate("borrowing");
+
+    if (!lateCharge) {
+      return res.status(404).json({ status: 404, message: "LateCharge not found" });
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: "LateCharge found successfully",
+      data: lateCharge,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+
+  }
+}
+
+// create lateCharge - POST
+
+export const  createLateCharge = async (req, res) => {
+  try {
+    const adminId = req.user.id;
+    const role = req.user.role;
+
+    if (role === "admin") {
+      res.status(403).json({
+        status: 403,
+        message: "You don't have permission",
+      });
+    }
+
+    const admin = await userModel.findById({ _id: adminId });
+
+    if (!admin) {
+      return res
+        .status(404)
+        .json({ status: 404, message: "The admin not found" });
+    }
+
+    const lateCharge = await lateChargeModel.create({
+      ...req.body,
+      admin: adminId,
+    });
+
+    if (!lateCharge) {
+      return res
+        .status(400)
+        .json({ status: 400, message: "late Charge was not created" });
+    }
+
+    res.status(201).json({
+      status: 201,
+      message: "late Charge created successfully",
+      data: lateCharge,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+
+};
+
+// Get paid Charge - GET
+export const getPaidCharges = async (req, res) => {
+  try {
+    const search = req.query;
+
+    const paidCharge = await paidChargeModel
+    .find(search)
+    .sort({ createdAt: -1 })
+    .populate("borrowing");
+
+    if (paidCharge.length === 0) {
+      return res
+        .status(404)
+        .json({ status: 404, message: "Paid charges not found" });
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: "Paid charges found successfully",
+      data: paidCharge,
+    });
 
 
+  }
+  catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: "Internal Server Error",
+    });
+  }
+  
+}
 
+//get Paid Charge - GET BY ID
+export const getPaidCharge = async (req, res) => {
+  try {
+    const paidCharge = await paidChargeModel
+      .findById(req.params.id)
+      .sort({ createdAt: -1 })
+      .populate("borrowing");
 
+    if (!paidCharge) {
+      return res.status(404).json({ status: 404, message: "PaidCharge not found" });
+    }
 
+    res.status(200).json({
+      status: 200,
+      message: "PaidCharge found successfully",
+      data: paidCharge,
+    });
 
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: "Internal Server Error",
+      error: error.message,
+    });
 
+  }
+}
+
+// Create paid charge - POST
+export const createPaidCharge = async (req, res) => {
+  try {
+    const customerId = req.user.id;
+    const role = req.user.role;
+
+    // Corrected the condition: Only allow customers to create a  paid charge
+    if (role !== "customer") {
+      return res.status(403).json({
+        status: 403,
+        message: "You don't have permission",
+      });
+    }
+
+    // Check if the customer exists
+    const customer = await userModel.findById({ _id: customerId });
+    if (!customer) {
+      return res
+        .status(404)
+        .json({ status: 404, message: "The customer not found" });
+    }
+
+    // Create the borrowing
+    const paidCharge = await paidChargeModel.create({
+      ...req.body,
+      customer: customerId,
+    });
+ 
+    await paidCharge.save();
+    res.status(200).json({
+      status: 200,
+      message: "Paid charge created successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
