@@ -15,7 +15,7 @@ router.delete("/deleteBook/:id", verifyToken, deleteBook);
 
 // borrowing - endpoints
 router.get("/getBorrows", getBorrows);
-router.get("/getBorrow/:id", verifyToken, getBorrowing);
+router.get("/getBorrow/:id",  getBorrowing);
 router.post("/BorrowingCreate", verifyToken, createBorrowing);
 router.put("/updateBorrowing/:id", verifyToken, updateBorrowing);
 router.delete("/deleteBorrowing/:id",verifyToken, deleteBorrowing );
