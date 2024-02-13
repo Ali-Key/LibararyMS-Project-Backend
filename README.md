@@ -573,7 +573,7 @@ Create a new paid charge. This endpoint is accessible to users with the "custome
 
 The endpoint will create a new paid charge in the database using the paid charge model with the provided parameters. If the paid charge is created successfully, it will return a JSON response with the status code `200` and a message:
 
-####  Response
+#### Response
 
 ```
 {
