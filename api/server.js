@@ -10,7 +10,7 @@ const server = express()
 dotenv.config()
 server.use(express.json())
 
-const conn = process.env.MONGO_URL || 'mongodb://localhost:27017/LibraryMS';
+const conn = process.env.MONGO_URL || 'mongodb+srv://alikey:HooyoMcn@libararyms.9j9uo3u.mongodb.net/';
 
 
 
