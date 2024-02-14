@@ -12,7 +12,7 @@
     "type": "git",
     "url": "library management system"
   },
-  "author": "Ali Omar Abdi",
+  "author": "Ali  Omar Abdi",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
