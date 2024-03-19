@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
-mongoose.options.strictPopulate = false;
+
+mongoose.options.strictPopulate = false; // 
 
 const userSchema = new mongoose.Schema({
     avatar: {
